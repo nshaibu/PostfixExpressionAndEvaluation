@@ -226,7 +226,7 @@ void callback_infix_to_postfix_exp(void){
 				if (ret_of_other_op_test) 
 					while (p < other_op_len) output[j++]=other_op[p++];
 								
-				len_op=0;
+				len_op=0; p=0; ret_of_other_op_test=false;
 			}
 			else if (isalpha(resp[i])) { 
 				other_op[len_op++]=resp[i];
@@ -236,7 +236,9 @@ void callback_infix_to_postfix_exp(void){
 								len_op=0;
 			}
 			else {
-				while (!is_stack_empty(stack) && precedence_table(peek(stack)) >= precedence_table(resp[i]) ) output[j++]=pop(stack);
+				while (!is_stack_empty(stack) && precedence_table(peek(stack)) >= precedence_table(resp[i]) ) 
+						output[j++]=pop(stack);
+												
 				push(stack, resp[i]);
 			}
 		}
@@ -274,7 +276,7 @@ char* infix_to_postfix(char *arr){
 	
 	bool ret_of_other_op_test=false;		
 	char ch, other_op[6];
-	int j=0, len_of_other_op=0, p=0;
+	int j=0, len_op=0, p=0, other_op_len=0;
 		
 	stack_t* stack=init_stack();
 		
@@ -285,14 +287,22 @@ char* infix_to_postfix(char *arr){
 		else if (arr[i]==')') { 
 			while ((ch=pop(stack)) != '(') output[j++]=ch;
 				
-			if (ret_of_other_op_test) while (p < len_of_other_op) output[j++]=other_op[p++];
+				if (ret_of_other_op_test) 
+					while (p < other_op_len) output[j++]=other_op[p++];
+								
+				len_op=0; p=0; ret_of_other_op_test=false;
 		}
 		else if (isalpha(arr[i])) { 
-			other_op[len_of_other_op++]=arr[i];
-			ret_of_other_op_test=other_operators_test(other_op, len_of_other_op);
+				other_op[len_op++]=arr[i];
+				other_op_len=len_op;
+						
+				if ((ret_of_other_op_test=other_operators_test(other_op, len_op)))
+								len_op=0;
 		}
 		else {
-			while (!is_stack_empty(stack) && precedence_table(peek(stack)) >= precedence_table(arr[i]) ) output[j++]=pop(stack);
+			while (!is_stack_empty(stack) && precedence_table(peek(stack)) >= precedence_table(arr[i]) ) 
+					output[j++]=pop(stack);
+									
 			push(stack, arr[i]);
 		}
 	}
