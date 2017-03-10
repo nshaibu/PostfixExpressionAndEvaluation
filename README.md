@@ -9,6 +9,6 @@ output:
 ##try.c 
 output:
 Nafiu~ 4 * sin(7 + 4)
- -3.99996
+-3.99996
 
 
