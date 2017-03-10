@@ -215,7 +215,7 @@ void callback_infix_to_postfix_exp(void){
 				
 		char ch;
 		stack_t* stack=init_stack();
-		int j=0, len_of_other_op=0, p=0;
+		int j=0, len_op=0, p=0, other_op_len=0;
 				
 		for (int i=0; i<strlen(resp); i++){
 			if (isspace(resp[i]) || isdigit(resp[i])) output[j++]=resp[i];
@@ -223,11 +223,17 @@ void callback_infix_to_postfix_exp(void){
 			else if (resp[i]==')') { 
 				while ((ch=pop(stack)) != '(') output[j++]=ch;
 				
-				if (ret_of_other_op_test) while (p < len_of_other_op) output[j++]=other_op[p++];
+				if (ret_of_other_op_test) 
+					while (p < other_op_len) output[j++]=other_op[p++];
+								
+				len_op=0;
 			}
 			else if (isalpha(resp[i])) { 
-				other_op[len_of_other_op++]=resp[i];
-				ret_of_other_op_test=other_operators_test(other_op, len_of_other_op);
+				other_op[len_op++]=resp[i];
+				other_op_len=len_op;
+								
+				if ((ret_of_other_op_test=other_operators_test(other_op, len_op)))
+								len_op=0;
 			}
 			else {
 				while (!is_stack_empty(stack) && precedence_table(peek(stack)) >= precedence_table(resp[i]) ) output[j++]=pop(stack);
